@@ -1,2 +1,2 @@
 # tesufr
-Text Summarizing Framework
+Multilingual Text Summarizing Framework
