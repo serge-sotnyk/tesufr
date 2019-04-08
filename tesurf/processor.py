@@ -1,12 +1,14 @@
-from langdetect.lang_detect_exception import LangDetectException
+from typing import List
 
-from .initial_parser import parse_sentences_multilingual
-from .models import Document, Fragment, Sentence, MessageWithCode
-from .text_process_params import TextProcessParams
 # from .lang_cores import can_process_lang, construct_spacy_core, CoreBase
 from langdetect import detect, detect_langs
+from langdetect.lang_detect_exception import LangDetectException
 from langdetect.language import Language
-from typing import List
+
+from tesurf.cores import CoreBase
+from .initial_parser import parse_sentences_multilingual
+from .models import Document, Sentence, MessageWithCode
+from .text_process_params import TextProcessParams
 
 
 def parse_sentences(document: Document) -> type(None):
@@ -21,7 +23,7 @@ def parse_sentences(document: Document) -> type(None):
         document.sentences.append(sentence)
 
 
-class DigestProcessor:
+class Processor:
     def __init__(self):
         pass
 

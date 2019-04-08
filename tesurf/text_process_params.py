@@ -1,11 +1,11 @@
-from .digest_size import DigestSize
+from .summary_size import SummarySize
 
 
 class TextProcessParams:
-    """Parameters for processing text by DigestProcessor"""
+    """Parameters for processing text by Processor"""
 
     def __init__(self,
-                 digest_size: DigestSize,
+                 digest_size: SummarySize,
                  keywords_number: int = 0):
         self.digest_size = digest_size
         if keywords_number < 0:
