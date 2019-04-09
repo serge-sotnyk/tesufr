@@ -6,7 +6,7 @@ from .fragment import Fragment
 
 class EntityKind(IntEnum):
     KEYWORD = 0
-    DIGEST_SENTENCE = 1
+    SUMMARY_SENTENCE = 1
     NAMED = 2
 
 

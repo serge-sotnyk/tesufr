@@ -1,4 +1,4 @@
-from . import TextSource
+from .text_source import TextSource
 
 
 class TextContainer(TextSource):

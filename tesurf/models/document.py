@@ -9,12 +9,15 @@ MessageWithCode = namedtuple('MessageWithCode', ['code', 'message'])
 
 
 class Document(TextContainer):
-    """Original text with digest"""
+    """
+    Original text with extracted summary, keywords, named entities, etc.
+    """
     def __init__(self, text: str):
         TextContainer.__init__(self, text=text)
+        self.main_lang: str = ''
         self.keywords: List[Entity] = []
         self.entities: List[Entity] = []
-        self.digest: List[Entity] = []
+        self.summary: List[Entity] = []
         self.sentences: List[Sentence] = []
         self.warnings: List[MessageWithCode] = []
         self.errors: List[MessageWithCode] = []

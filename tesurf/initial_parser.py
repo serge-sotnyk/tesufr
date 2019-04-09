@@ -6,10 +6,10 @@ FragmentPositions = namedtuple('SentencePos', 'start finish')
 _paragraph_delimiters = {'\r', '\n'}
 
 
-def trim_positions(text: str, start: int, finish: int)->(int, int):
+def trim_positions(text: str, start: int, finish: int) -> (int, int):
     s = None
     f = None
-    max_index = len(text)-1
+    max_index = len(text) - 1
     for pos in range(start, min(finish, max_index)):
         if not text[pos].isspace():
             s = pos
@@ -19,12 +19,12 @@ def trim_positions(text: str, start: int, finish: int)->(int, int):
         return None
     for pos in range(min(finish, max_index), start, -1):
         if not text[pos].isspace():
-            f = pos+1
+            f = pos + 1
             break
     return s, f
 
 
-def parse_paragraphs(text: str)->List[FragmentPositions]:
+def parse_paragraphs(text: str) -> List[FragmentPositions]:
     # find all possible paragraph bounds
     paragraph_delimiter_positions = [i for i, c in enumerate(text) if c in _paragraph_delimiters]
     paragraph_delimiter_positions.insert(0, 0)
@@ -44,17 +44,16 @@ def parse_paragraphs(text: str)->List[FragmentPositions]:
     return paragraphs_pos
 
 
-def text_fragment(text: str, fragment_pos: FragmentPositions)->str:
+def text_fragment(text: str, fragment_pos: FragmentPositions) -> str:
     return text[fragment_pos.start: fragment_pos.finish]
 
 
-def parse_sentences_multilingual(text: str)->List[FragmentPositions]:
+def parse_sentences_multilingual(text: str) -> List[FragmentPositions]:
     paragraphs = parse_paragraphs(text)
     res = []
     for paragraph in paragraphs:
         blob = TextBlob(text_fragment(text, paragraph))
         for sentence in blob.sentences:
-            res.append(FragmentPositions(sentence.start+paragraph.start,
-                                         sentence.end+paragraph.start))
-
+            res.append(FragmentPositions(sentence.start + paragraph.start,
+                                         sentence.end + paragraph.start))
     return res

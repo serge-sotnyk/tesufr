@@ -1,5 +1,5 @@
-from . import TextContainer
-from . import TextSource
+from .text_container import TextContainer
+from .text_source import TextSource
 
 
 class Fragment(TextSource):

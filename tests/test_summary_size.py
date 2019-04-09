@@ -1,0 +1,33 @@
+import pytest
+
+from tesurf.summary_size import SummarySize
+
+
+def test_digest_size_relative():
+    size = SummarySize.new_relative(relative_part=0.5)
+    assert size.calculate_size(100) == 50
+
+
+def test_digest_size_relative_too_much():
+    size = SummarySize.new_relative(3.0)  # 300%
+    assert size.calculate_size(100) == 100
+
+
+def test_digest_size_relative_negative():
+    with pytest.raises(ValueError):
+        SummarySize.new_relative(-0.1)
+
+
+def test_digest_size_absolute():
+    size = SummarySize.new_absolute(5)
+    assert size.calculate_size(100) == 5
+
+
+def test_digest_size_absolute_too_much():
+    size = SummarySize.new_absolute(500000)
+    assert size.calculate_size(100) == 100
+
+
+def test_digest_size_absolute_negative():
+    with pytest.raises(ValueError):
+        SummarySize.new_absolute(-10)

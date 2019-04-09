@@ -6,12 +6,12 @@ class SummarySize:
         self.__is_relative = is_relative
         if is_relative:
             if relative_part < 0:
-                raise ValueError("Relative digest size should be non-negative value, but '{}' passed"
+                raise ValueError("Relative summary size should be non-negative value, but '{}' passed"
                                  .format(relative_part))
             self.__relative_part = relative_part
         else:
             if absolute_size < 0:
-                raise ValueError("Absolute digest size should be non-negative value, but '{}' passed"
+                raise ValueError("Absolute summary size should be non-negative value, but '{}' passed"
                                  .format(absolute_size))
             self.__absolute_size = absolute_size
 

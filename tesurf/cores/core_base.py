@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractclassmethod
 
 from .. import TextProcessParams
 from ..models import Document
@@ -9,4 +9,8 @@ class CoreBase(ABC):
 
     @abstractmethod
     def process_document(self, doc: Document, text_process_params: TextProcessParams):
-        pass
+        ...
+
+    @abstractmethod
+    def can_process(self, doc: Document, text_process_params: TextProcessParams) -> bool:
+        ...
