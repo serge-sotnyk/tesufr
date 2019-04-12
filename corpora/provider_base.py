@@ -1,26 +1,30 @@
+import os
+import urllib.parse as urlparse
 from abc import ABC, abstractmethod
+from pathlib import Path
 from typing import Iterable
+
+import requests
+from google_drive_downloader import GoogleDriveDownloader as gdd
+from tqdm.auto import tqdm
 
 from corpora.corpus_document import CorpusDocument
 from corpora.corpus_purposes import CorpusPurpose
 from corpora.set_types import SetType
-
-import os
-from pathlib import Path
-import math
-
-import requests
-from tqdm.auto import tqdm
 
 
 class ProviderBase(ABC):
     """
     Abstract base class for corpus providers
     """
-
     def language(self) -> str:
-        """Return language (two-letter string) of the corpus documents."""
+        """Returns language (two-letter string) of the corpus documents."""
         return 'en'
+
+    def subset_size(self, type_of_set: SetType) -> int:
+        """Returns length of documents subset."""
+        # dumb implementation, recommended to implement optimized edition in descendants
+        return sum(1 for d in self.subset(type_of_set))
 
     @abstractmethod
     def purpose(self) -> CorpusPurpose:
@@ -54,6 +58,13 @@ class ProviderBase(ABC):
 
     @staticmethod
     def download_with_progress(link: str, filename: str):
+        if link.startswith('https://drive.google.com'):
+            # special version for Google Drive
+            parsed = urlparse.urlparse(link)
+            file_id = urlparse.parse_qs(parsed.query)['id']
+            gdd.download_file_from_google_drive(file_id, filename, unzip=False)
+            return
+
         file_path = Path(filename)
 
         dir_ = str(file_path.parent.absolute())

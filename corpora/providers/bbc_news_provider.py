@@ -1,17 +1,39 @@
 import os
-from typing import Iterable
+from typing import Iterable, Sequence
 from zipfile import ZipFile
 
 from sklearn.model_selection import train_test_split
 
 from corpora import SetType, CorpusDocument, CorpusPurpose
-from .. import ProviderBase
+from .ids_provider import IdsProvider
 
 
-class BbcNewsProvider(ProviderBase):
+class BbcNewsProvider(IdsProvider):
     """
     Provider for https://www.kaggle.com/pariza/bbc-news-summary/data corpora
     """
+
+    @staticmethod
+    def _bbc_sentences_divider(text: str) -> Sequence[str]:
+        start = 0
+
+        def fetch_sent(pos: int) -> str:
+            nonlocal start
+            res = text[start: pos + 1].strip()
+            start = pos + 1
+            return res
+
+        puncts = {'.', '!', '?'}
+
+        tlen = len(text)
+        for pos in range(tlen - 1):
+            if text[pos] in puncts:
+                if text[pos + 1].isspace() or text[pos + 1].isupper():
+                    yield fetch_sent(pos)
+                elif pos + 2 < tlen and text[pos + 1] == '"':
+                    if text[pos + 2].isupper() or text[pos + 2].isspace():
+                        yield fetch_sent(pos + 1)
+        yield fetch_sent(len(text) - 1)
 
     def purpose(self) -> CorpusPurpose:
         return CorpusPurpose.SUMMARY
@@ -35,12 +57,13 @@ class BbcNewsProvider(ProviderBase):
                     article = a.read().decode(encoding='utf-8', errors='replace')
                 with zip_corpus.open('Summaries/' + id_) as sm:
                     summary = sm.read().decode(encoding='utf-8', errors='replace')
-                res = CorpusDocument(id_, text=article, ref_summary=summary.splitlines(), lang=lang)
+                sum_sets = list(BbcNewsProvider._bbc_sentences_divider(summary))
+                res = CorpusDocument(id_, text=article, ref_summary=sum_sets, lang=lang)
                 yield res
 
-    def __init__(self,
-                 local_filename: str = 'corpora/bbc-news-summary.zip',
+    def __init__(self, local_filename: str = 'corpora_data/bbc-news-summary.zip',
                  url: str = 'https://drive.google.com/uc?authuser=0&id=1xtY-OYYoyeat_DS_Jw-DdCT5MCmC44qV&export=download'):
+        super().__init__()
         self.filename = os.path.abspath(local_filename)
         if not self.check_if_file_exist_make_dir(self.filename):
             self.download_with_progress(url, self.filename)
@@ -50,8 +73,4 @@ class BbcNewsProvider(ProviderBase):
         prefix = 'Summaries/'
         ids = [s[len(prefix):] for s in all_names if s.startswith(prefix) and not s.endswith('/')]
         self.ids = sorted(ids)
-        train_ids, test_ids = train_test_split(self.ids, test_size=0.2, random_state=1974)
-        train_ids, dev_ids = train_test_split(train_ids, test_size=0.25, random_state=1974)  # 20% of the full set
-        self.ids_train = train_ids
-        self.ids_dev = dev_ids
-        self.ids_test = test_ids
+        self._prepare_subsets()

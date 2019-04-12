@@ -1,12 +1,15 @@
 from collections import defaultdict
 from typing import Dict, Set, List, Sequence
 
+from tqdm.auto import tqdm
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 from sumeval.metrics.bleu import BLEUCalculator
 from sumeval.metrics.rouge import RougeCalculator
 
+from corpora import ProviderBase, SetType, CorpusPurpose
+from tesurf import Processor, TextProcessParams, SummarySize
 from .document_for_eval import DocumentForEval
 
 _wordnet_lemmatizer = WordNetLemmatizer()
@@ -72,6 +75,7 @@ def evaluate_summary(document: DocumentForEval) -> Dict[str, float]:
         references=ref_summary,
         n=4)
 
+    # pip install sacrebleu==1.2.21 --force-reinstall if you get exception here
     bleu_score = bleu.bleu(
         summary=summary,
         references=ref_summary)
@@ -112,3 +116,39 @@ def evaluate_sequence(docs: Sequence[DocumentForEval],
         for k, v in res.items():
             result[k] = v / counter
     return result
+
+
+def _make_sequence(processor: Processor,
+                   corpus: ProviderBase,
+                   set_type: SetType = SetType.DEV) -> Sequence[DocumentForEval]:
+    for d in tqdm(corpus.subset(set_type), total=corpus.subset_size(set_type)):
+        summary_size = SummarySize.new_absolute(len(d.ref_summary)) \
+            if corpus.purpose() & CorpusPurpose.SUMMARY \
+            else SummarySize.new_relative(.1)
+        kw_num = len(d.ref_keywords) if corpus.purpose() & CorpusPurpose.KEYWORDS else 0
+        text_process_params = TextProcessParams(summary_size, kw_num)
+        summary = processor.process_text(d.text, text_process_params)
+        res = DocumentForEval(d.ref_keywords,
+                              [kw.lemma for kw in summary.keywords],
+                              d.ref_summary,
+                              [s.lemma for s in summary.summary],
+                              corpus.language())
+        yield res
+
+
+def evaluate_processor_on_corpus(processor: Processor,
+                                 corpus: ProviderBase,
+                                 set_type: SetType = SetType.DEV) -> Dict[str, float]:
+    """
+    Function evaluates metrics for documents from corpus after processing with passed processor. Comparison
+    performs with ground "truth part" (reference) part of corpus.
+    :param processor: initialized instance of Processor
+    :param corpus: corpus with documents and summaries and/or keywords
+    :param set_type: part of corpus which should be used
+    :return: dictionary with mean value for every metric
+    """
+
+    keywords_evaluate = bool(corpus.purpose() & CorpusPurpose.KEYWORDS)
+    summary_evaluate = bool(corpus.purpose() & CorpusPurpose.SUMMARY)
+    return evaluate_sequence(_make_sequence(processor, corpus, set_type),
+                             keywords_evaluate, summary_evaluate)
