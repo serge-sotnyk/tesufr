@@ -1,4 +1,4 @@
-from tesurf.text_utils.dos_formatting import is_text_dos_formatted, remove_dos_formatting
+from tesufr.text_utils.dos_formatting import is_text_dos_formatted, remove_dos_formatting
 
 dos_formatted_text = """
 Introduction

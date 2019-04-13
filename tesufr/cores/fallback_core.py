@@ -5,7 +5,7 @@ from typing import List, Dict
 from langdetect import detect
 from langdetect.lang_detect_exception import LangDetectException
 
-from tesurf.models import Sentence, Entity, EntityKind, Fragment
+from tesufr.models import Sentence, Entity, EntityKind, Fragment
 from .core_base import CoreBase
 from .. import TextProcessParams
 from ..initial_parser import parse_sentences_multilingual

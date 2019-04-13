@@ -2,8 +2,8 @@ import os
 from typing import Iterable, List
 from zipfile import ZipFile
 
-from tesurf.corpora import SetType, CorpusDocument, CorpusPurpose
-from tesurf.text_utils.dos_formatting import remove_dos_formatting
+from tesufr.corpora import SetType, CorpusDocument, CorpusPurpose
+from tesufr.text_utils.dos_formatting import remove_dos_formatting
 from .ids_provider import IdsProvider
 
 

@@ -1,5 +1,5 @@
-from tesurf import Processor, SummarySize, TextProcessParams
-from tesurf.models import Document
+from tesufr import Processor, SummarySize, TextProcessParams
+from tesufr.models import Document
 from os import path
 from nltk.corpus import udhr
 import nltk

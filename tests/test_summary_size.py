@@ -1,6 +1,6 @@
 import pytest
 
-from tesurf.summary_size import SummarySize
+from tesufr.summary_size import SummarySize
 
 
 def test_digest_size_relative():

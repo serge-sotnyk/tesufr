@@ -1,6 +1,6 @@
 import pytest
 
-from tesurf import SummarySize, TextProcessParams
+from tesufr import SummarySize, TextProcessParams
 
 
 def test_TextProcessParams_creation():

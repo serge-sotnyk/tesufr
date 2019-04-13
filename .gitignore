@@ -1,5 +1,5 @@
 # Corpora
-corpora/*.zip
+**/corpora_data/*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

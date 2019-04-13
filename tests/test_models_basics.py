@@ -1,4 +1,4 @@
-from tesurf.models import *
+from tesufr.models import *
 
 
 def test_fragment():

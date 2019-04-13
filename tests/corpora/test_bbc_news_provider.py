@@ -1,7 +1,7 @@
 from itertools import zip_longest
 
-from tesurf.corpora import CorpusPurpose, SetType
-from tesurf.corpora.providers import BbcNewsProvider
+from tesufr.corpora import CorpusPurpose, SetType
+from tesufr.corpora.providers import BbcNewsProvider
 
 
 def test_bbc_news_provider_initialization():

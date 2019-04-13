@@ -8,8 +8,8 @@ from nltk.tokenize import word_tokenize
 from sumeval.metrics.bleu import BLEUCalculator
 from sumeval.metrics.rouge import RougeCalculator
 
-from tesurf.corpora import ProviderBase, SetType, CorpusPurpose
-from tesurf import Processor, TextProcessParams, SummarySize
+from tesufr.corpora import ProviderBase, SetType, CorpusPurpose
+from tesufr import Processor, TextProcessParams, SummarySize
 from .document_for_eval import DocumentForEval
 
 _wordnet_lemmatizer = WordNetLemmatizer()

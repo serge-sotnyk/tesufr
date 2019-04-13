@@ -1,6 +1,6 @@
-from tesurf.corpora.providers import BbcNewsProvider, Krapivin2009Provider
-from tesurf.keysum_evaluator import evaluate_processor_on_corpus
-from tesurf import Processor
+from tesufr.corpora.providers import BbcNewsProvider, Krapivin2009Provider
+from tesufr.keysum_evaluator import evaluate_processor_on_corpus
+from tesufr import Processor
 
 
 def evaluate_all_corpora():

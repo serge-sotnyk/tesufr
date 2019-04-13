@@ -1,4 +1,4 @@
-from tesurf import *
+from tesufr import *
 
 
 def test_parse_paragraphs_basic():

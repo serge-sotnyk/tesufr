@@ -1,7 +1,7 @@
 from itertools import zip_longest
 
-from tesurf.corpora import CorpusPurpose, SetType
-from tesurf.corpora.providers import Krapivin2009Provider
+from tesufr.corpora import CorpusPurpose, SetType
+from tesufr.corpora.providers import Krapivin2009Provider
 
 
 def test_krapivin2009_provider_initialization():
