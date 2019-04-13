@@ -1,7 +1,7 @@
 from itertools import zip_longest
 
-from corpora import CorpusPurpose, SetType
-from corpora.providers import Krapivin2009Provider
+from tesurf.corpora import CorpusPurpose, SetType
+from tesurf.corpora.providers import Krapivin2009Provider
 
 
 def test_krapivin2009_provider_initialization():
@@ -22,11 +22,11 @@ def test_krapivin2009_provider_extract_subset():
 
 
 def test_krapivin2009_provider_subset_order():
-    bbc_news_provider = Krapivin2009Provider()
-    bbc_news_provider2 = Krapivin2009Provider()
+    corpus_provider = Krapivin2009Provider()
+    corpus_provider2 = Krapivin2009Provider()
     for s in [SetType.ALL, SetType.TRAINING, SetType.DEV, SetType.TEST]:
-        set1 = list(bbc_news_provider.subset(s))
-        set2 = list(bbc_news_provider2.subset(s))
+        set1 = list(corpus_provider.subset(s))
+        set2 = list(corpus_provider2.subset(s))
         for s1, s2 in zip_longest(set1, set2):
             assert s1.id_ == s2.id_
             assert s1.text == s2.text

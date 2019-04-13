@@ -2,9 +2,7 @@ import os
 from typing import Iterable, Sequence
 from zipfile import ZipFile
 
-from sklearn.model_selection import train_test_split
-
-from corpora import SetType, CorpusDocument, CorpusPurpose
+from .. import SetType, CorpusDocument, CorpusPurpose
 from .ids_provider import IdsProvider
 
 

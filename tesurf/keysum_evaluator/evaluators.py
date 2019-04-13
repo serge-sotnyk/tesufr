@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import Dict, Set, List, Sequence
+from typing import Dict, Set, List, Sequence, Optional
 
 from tqdm.auto import tqdm
 from nltk.corpus import stopwords
@@ -8,7 +8,7 @@ from nltk.tokenize import word_tokenize
 from sumeval.metrics.bleu import BLEUCalculator
 from sumeval.metrics.rouge import RougeCalculator
 
-from corpora import ProviderBase, SetType, CorpusPurpose
+from tesurf.corpora import ProviderBase, SetType, CorpusPurpose
 from tesurf import Processor, TextProcessParams, SummarySize
 from .document_for_eval import DocumentForEval
 
@@ -138,6 +138,7 @@ def _make_sequence(processor: Processor,
 
 def evaluate_processor_on_corpus(processor: Processor,
                                  corpus: ProviderBase,
+                                 title: Optional[str] = None,
                                  set_type: SetType = SetType.DEV) -> Dict[str, float]:
     """
     Function evaluates metrics for documents from corpus after processing with passed processor. Comparison
@@ -148,6 +149,8 @@ def evaluate_processor_on_corpus(processor: Processor,
     :return: dictionary with mean value for every metric
     """
 
+    if title:
+        print(f"Check metrics for {title}")
     keywords_evaluate = bool(corpus.purpose() & CorpusPurpose.KEYWORDS)
     summary_evaluate = bool(corpus.purpose() & CorpusPurpose.SUMMARY)
     return evaluate_sequence(_make_sequence(processor, corpus, set_type),

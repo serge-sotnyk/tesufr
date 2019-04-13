@@ -8,9 +8,9 @@ import requests
 from google_drive_downloader import GoogleDriveDownloader as gdd
 from tqdm.auto import tqdm
 
-from corpora.corpus_document import CorpusDocument
-from corpora.corpus_purposes import CorpusPurpose
-from corpora.set_types import SetType
+from .corpus_document import CorpusDocument
+from .corpus_purposes import CorpusPurpose
+from .set_types import SetType
 
 
 class ProviderBase(ABC):

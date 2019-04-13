@@ -2,7 +2,7 @@ from abc import ABC
 
 from sklearn.model_selection import train_test_split
 
-from corpora import ProviderBase, SetType
+from tesurf.corpora import ProviderBase, SetType
 
 
 class IdsProvider(ProviderBase, ABC):

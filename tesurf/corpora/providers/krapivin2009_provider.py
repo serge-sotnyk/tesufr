@@ -1,10 +1,10 @@
 import os
-from typing import Iterable, Sequence, List
+from typing import Iterable, List
 from zipfile import ZipFile
 
-from corpora import SetType, CorpusDocument, CorpusPurpose
+from tesurf.corpora import SetType, CorpusDocument, CorpusPurpose
+from tesurf.text_utils.dos_formatting import remove_dos_formatting
 from .ids_provider import IdsProvider
-from google_drive_downloader import GoogleDriveDownloader as gdd
 
 
 class Krapivin2009Provider(IdsProvider):
@@ -13,28 +13,6 @@ class Krapivin2009Provider(IdsProvider):
     Mikalai Krapivin and Aliaksandr Autayeu and Maurizio Marchese, "Large Dataset for Keyphrases Extraction",
     Technical Report DISI-09-055, DISI, University of Trento, Italy, 2009
     """
-
-    @staticmethod
-    def _bbc_sentences_divider(text: str) -> Sequence[str]:
-        start = 0
-
-        def fetch_sent(pos: int) -> str:
-            nonlocal start
-            res = text[start: pos + 1].strip()
-            start = pos + 1
-            return res
-
-        puncts = {'.', '!', '?'}
-
-        tlen = len(text)
-        for pos in range(tlen - 1):
-            if text[pos] in puncts:
-                if text[pos + 1].isspace() or text[pos + 1].isupper():
-                    yield fetch_sent(pos)
-                elif pos + 2 < tlen and text[pos + 1] == '"':
-                    if text[pos + 2].isupper() or text[pos + 2].isspace():
-                        yield fetch_sent(pos + 1)
-        yield fetch_sent(len(text) - 1)
 
     @staticmethod
     def _extract_article_summary_krapivin2009(article: str) -> (str, List[str]):
@@ -57,9 +35,10 @@ class Krapivin2009Provider(IdsProvider):
                     summary.append(l)
                 if in_text:
                     text.append(l)
-        summary = list(Krapivin2009Provider._bbc_sentences_divider(s) for s in summary)
 
-        return '\n'.join(text), summary
+        text_str = remove_dos_formatting('\n'.join(text))
+
+        return text_str, summary
 
     def purpose(self) -> CorpusPurpose:
         return CorpusPurpose(CorpusPurpose.SUMMARY | CorpusPurpose.KEYWORDS)
