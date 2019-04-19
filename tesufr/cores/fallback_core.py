@@ -2,7 +2,7 @@ import re
 from collections import defaultdict
 from typing import List, Dict
 
-from langdetect import detect
+from langdetect import DetectorFactory
 from langdetect.lang_detect_exception import LangDetectException
 
 from tesufr.models import Sentence, Entity, EntityKind, Fragment
@@ -10,6 +10,8 @@ from .core_base import CoreBase
 from .. import TextProcessParams
 from ..initial_parser import parse_sentences_multilingual
 from ..models import Document
+
+_lang_detector_factory = DetectorFactory()
 
 
 class FallbackCore(CoreBase):
@@ -22,7 +24,10 @@ class FallbackCore(CoreBase):
         for sent in raw_sentences:
             sentence = Sentence(doc, sent.start, sent.finish)
             try:
-                sentence.lang = detect(sentence.text)
+                text = sentence.text
+                detector = _lang_detector_factory.create()
+                detector.append(text)
+                sentence.lang = detector.detect()
             except LangDetectException:
                 pass
             doc.sentences.append(sentence)

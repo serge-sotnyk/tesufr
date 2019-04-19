@@ -1,5 +1,6 @@
 from collections import namedtuple
 from typing import List
+
 from textblob import TextBlob
 
 FragmentPositions = namedtuple('SentencePos', 'start finish')

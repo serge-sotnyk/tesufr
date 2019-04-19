@@ -1,6 +1,6 @@
+from tesufr import Processor
 from tesufr.corpora.providers import BbcNewsProvider, Krapivin2009Provider
 from tesufr.keysum_evaluator import evaluate_processor_on_corpus
-from tesufr import Processor
 
 
 def evaluate_all_corpora():
@@ -15,4 +15,5 @@ def evaluate_all_corpora():
 
 
 if __name__ == "__main__":
+
     evaluate_all_corpora()
