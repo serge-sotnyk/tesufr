@@ -24,6 +24,7 @@ requirements = [
     'scikit-learn>=0.20.1',
     'waitress>=1.2',
     'sumeval==0.1.7',
+    'summa',
 ]
 
 dev_requirements = [

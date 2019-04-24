@@ -2,35 +2,15 @@ import re
 from collections import defaultdict
 from typing import List, Dict
 
-from langdetect import DetectorFactory
-from langdetect.lang_detect_exception import LangDetectException
-
-from tesufr.models import Sentence, Entity, EntityKind, Fragment
+from ..models import Entity, EntityKind, Fragment
 from .core_base import CoreBase
+from .core_utils import parse_sentences
 from .. import TextProcessParams
-from ..initial_parser import parse_sentences_multilingual
 from ..models import Document
-
-_lang_detector_factory = DetectorFactory()
 
 
 class FallbackCore(CoreBase):
     """Fallback core"""
-
-    @staticmethod
-    def _parse_sentences(doc: Document) -> type(None):
-        raw_sentences = parse_sentences_multilingual(doc.text)
-        doc.sentences.clear()
-        for sent in raw_sentences:
-            sentence = Sentence(doc, sent.start, sent.finish)
-            try:
-                text = sentence.text
-                detector = _lang_detector_factory.create()
-                detector.append(text)
-                sentence.lang = detector.detect()
-            except LangDetectException:
-                pass
-            doc.sentences.append(sentence)
 
     def _retrieve_kw(self, doc: Document, text_process_params: TextProcessParams):
         kw_candidates: Dict[str, List[Fragment]] = defaultdict(list)
@@ -55,11 +35,10 @@ class FallbackCore(CoreBase):
         ...
 
     def process_document(self, doc: Document, text_process_params: TextProcessParams):
-        doc.sentences.clear()
         doc.keywords.clear()
         doc.entities.clear()
 
-        self._parse_sentences(doc)
+        parse_sentences(doc)
         for i, s in zip(range(text_process_params.summary_size.calculate_size(len(doc.sentences))), doc.sentences):
             summary_sent = Entity(s.text, EntityKind.SUMMARY_SENTENCE)
             summary_sent.entries.append(s)

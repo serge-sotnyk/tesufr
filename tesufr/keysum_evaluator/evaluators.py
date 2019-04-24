@@ -128,6 +128,11 @@ def _make_sequence(processor: Processor,
         kw_num = len(d.ref_keywords) if corpus.purpose() & CorpusPurpose.KEYWORDS else 0
         text_process_params = TextProcessParams(summary_size, kw_num)
         summary = processor.process_text(d.text, text_process_params)
+        if summary.errors:
+            print(F"Found errors during processing document '{d.id}'. Skipped.")
+            break
+        if summary.warnings:
+            print(f"Found in document {d.id} warnings during processing. First: {summary.warnings[0]}")
         res = DocumentForEval(d.ref_keywords,
                               [kw.lemma for kw in summary.keywords],
                               d.ref_summary,
@@ -145,6 +150,7 @@ def evaluate_processor_on_corpus(processor: Processor,
     performs with ground "truth part" (reference) part of corpus.
     :param processor: initialized instance of Processor
     :param corpus: corpus with documents and summaries and/or keywords
+    :param title: corpus name
     :param set_type: part of corpus which should be used
     :return: dictionary with mean value for every metric
     """

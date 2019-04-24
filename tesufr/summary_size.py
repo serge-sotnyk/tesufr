@@ -28,6 +28,18 @@ class SummarySize:
             result = self.__absolute_size
         return min(total_sentences, result)
 
+    def calculate_ratio(self, total_sentences: int) -> float:
+        if total_sentences < 0:
+            raise ValueError("total_sentences should be non-negative value, but '{}' passed".format(total_sentences))
+        if self.is_relative:
+            result = self.__relative_part
+        else:
+            if total_sentences == 0:  # special case
+                result = 0.5
+            else:
+                result = self.__absolute_size / total_sentences
+        return result
+
     @staticmethod
     def new_relative(relative_part: float) -> 'SummarySize':
         return SummarySize(is_relative=True, relative_part=relative_part)
