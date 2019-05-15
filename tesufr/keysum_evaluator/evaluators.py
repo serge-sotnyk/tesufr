@@ -129,10 +129,10 @@ def _make_sequence(processor: Processor,
         text_process_params = TextProcessParams(summary_size, kw_num)
         summary = processor.process_text(d.text, text_process_params)
         if summary.errors:
-            print(F"Found errors during processing document '{d.id}'. Skipped.")
+            print(F"Found errors during processing document '{d.id_}'. Skipped.")
             break
         if summary.warnings:
-            print(f"Found in document {d.id} warnings during processing. First: {summary.warnings[0]}")
+            print(f"Found in document {d.id_} warnings during processing. First: {summary.warnings[0]}")
         res = DocumentForEval(d.ref_keywords,
                               [kw.lemma for kw in summary.keywords],
                               d.ref_summary,
