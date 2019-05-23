@@ -59,6 +59,17 @@ class BbcNewsProvider(IdsProvider):
                 res = CorpusDocument(id_, text=article, ref_summary=sum_sets, lang=lang)
                 yield res
 
+    def document_by_id(self, id_: str) -> CorpusDocument:
+        lang = self.language()
+        with ZipFile(self.filename) as zip_corpus:
+            with zip_corpus.open('News Articles/' + id_) as a:
+                article = a.read().decode(encoding='utf-8', errors='replace')
+            with zip_corpus.open('Summaries/' + id_) as sm:
+                summary = sm.read().decode(encoding='utf-8', errors='replace')
+            sum_sets = list(BbcNewsProvider._bbc_sentences_divider(summary))
+        res = CorpusDocument(id_, text=article, ref_summary=sum_sets, lang=lang)
+        return res
+
     def __init__(self, local_filename: str = 'corpora_data/bbc-news-summary.zip',
                  url: str = 'https://drive.google.com/uc?authuser=0&id=1xtY-OYYoyeat_DS_Jw-DdCT5MCmC44qV&export=download'):
         super().__init__()

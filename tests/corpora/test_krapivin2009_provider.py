@@ -5,20 +5,20 @@ from tesufr.corpora.providers import Krapivin2009Provider
 
 
 def test_krapivin2009_provider_initialization():
-    bbc_news_provider = Krapivin2009Provider()
-    assert bbc_news_provider is not None
+    corpus_provider = Krapivin2009Provider()
+    assert corpus_provider is not None
 
 
 def test_krapivin2009_provider_metainfo():
-    bbc_news_provider = Krapivin2009Provider()
-    assert bbc_news_provider.language() == 'en'
-    assert bbc_news_provider.purpose() == CorpusPurpose.SUMMARY|CorpusPurpose.KEYWORDS
+    corpus_provider = Krapivin2009Provider()
+    assert corpus_provider.language() == 'en'
+    assert corpus_provider.purpose() == CorpusPurpose.SUMMARY|CorpusPurpose.KEYWORDS
 
 
 def test_krapivin2009_provider_extract_subset():
-    bbc_news_provider = Krapivin2009Provider()
+    corpus_provider = Krapivin2009Provider()
     for s in [SetType.ALL, SetType.TRAINING, SetType.DEV, SetType.TEST]:
-        assert len(list(bbc_news_provider.subset(s))) > 10
+        assert len(list(corpus_provider.subset(s))) > 10
 
 
 def test_krapivin2009_provider_subset_order():

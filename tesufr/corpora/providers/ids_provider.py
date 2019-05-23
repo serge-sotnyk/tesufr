@@ -1,8 +1,8 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 
 from sklearn.model_selection import train_test_split
 
-from tesufr.corpora import ProviderBase, SetType
+from tesufr.corpora import ProviderBase, SetType, CorpusDocument
 
 
 class IdsProvider(ProviderBase, ABC):
@@ -23,6 +23,13 @@ class IdsProvider(ProviderBase, ABC):
         self.ids_train = train_ids
         self.ids_dev = dev_ids
         self.ids_test = test_ids
+
+    @abstractmethod
+    def document_by_id(self, id_: str) -> CorpusDocument:
+        """
+        Method returns CorpusDocument with the passed id.
+        """
+        raise NotImplementedError()
 
     def subset_size(self, type_of_set: SetType) -> int:
         if type_of_set == SetType.ALL:

@@ -125,7 +125,7 @@ def _make_sequence(processor: Processor,
         summary_size = SummarySize.new_absolute(len(d.ref_summary)) \
             if corpus.purpose() & CorpusPurpose.SUMMARY \
             else SummarySize.new_relative(.1)
-        kw_num = len(d.ref_keywords) if corpus.purpose() & CorpusPurpose.KEYWORDS else 0
+        kw_num = len(retrieve_lemmatized_tokens(corpus.language(), d.ref_keywords)) if corpus.purpose() & CorpusPurpose.KEYWORDS else 0
         text_process_params = TextProcessParams(summary_size, kw_num)
         summary = processor.process_text(d.text, text_process_params)
         if summary.errors:

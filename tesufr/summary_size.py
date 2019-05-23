@@ -40,6 +40,16 @@ class SummarySize:
                 result = self.__absolute_size / total_sentences
         return result
 
+    def __str__(self):
+        return "SummarySize: " + \
+               f"relative={self.__relative_part}" if self.__is_relative else f"absolute={self.__absolute_size}"
+
+    def __repr__(self):
+        if self.is_relative:
+            return f"SummarySize(is_relative={self.__is_relative}, relative_part={self.__relative_part})"
+        else:
+            return f"SummarySize(is_relative={self.__is_relative}, absolute_size={self.__absolute_size})"
+
     @staticmethod
     def new_relative(relative_part: float) -> 'SummarySize':
         return SummarySize(is_relative=True, relative_part=relative_part)

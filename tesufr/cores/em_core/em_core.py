@@ -15,6 +15,7 @@ from bpemb import BPEmb
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 import networkx as nx
+import re
 
 
 class LangModelDefinition(NamedTuple):
@@ -32,6 +33,8 @@ lang_models: Dict[str, LangModelDefinition] = {
 
 _ImportanceIndex = namedtuple("_ImportanceIndex", ['importance', 'index'])
 _NeKey = namedtuple("_NeKey", ['lemma', 'subtype'])
+
+_re_tokenizer = re.compile(r"\w+", re.UNICODE)
 
 _diversity_factor: float = 0.25
 
@@ -83,6 +86,11 @@ class EmCore(CoreBase):
         sent.embedding = vector
 
     @staticmethod
+    def _count_tokens(kw: Entity) -> int:
+        matches = _re_tokenizer.findall(kw.lemma)
+        return len(matches)
+
+    @staticmethod
     def _get_kw_indices(doc_vector: np.ndarray,
                         kw_candidates: List[Entity],
                         kw_num: int,
@@ -114,6 +122,7 @@ class EmCore(CoreBase):
         selected: int = np.argmax(kw_distances_1d)
         selected_candidates.append(selected)
         unselected_candidates.remove(selected)
+        kw_counter = EmCore._count_tokens(kw_candidates[selected])
 
         # select other N-1 keywords
         for _ in range(kw_num - 1):
@@ -130,6 +139,9 @@ class EmCore(CoreBase):
             selected = unselected_candidates[np.argmax(ranks)]
             selected_candidates.append(selected)
             unselected_candidates.remove(selected)
+            kw_counter += EmCore._count_tokens(kw_candidates[selected])
+            if kw_counter >= kw_num:
+                break
 
         return selected_candidates
 
@@ -174,7 +186,7 @@ class EmCore(CoreBase):
         stop_words = self.nlp.Defaults.stop_words
         buff = []
         for t in reversed(sent):
-            if t.is_stop or t.lower_ in stop_words or t.lemma_ in stop_words or len(t)<3:
+            if t.is_stop or t.lower_ in stop_words or t.lemma_ in stop_words or len(t) < 3:
                 add_buff_to_result(buff)
                 continue
             if t.pos_ in nouns:
@@ -244,7 +256,7 @@ class EmCore(CoreBase):
                 en_key = _NeKey(en.lemma_, en.label_)
                 entities[en_key].append(Fragment(doc, p.start + en.start_char, p.start + en.end_char))
 
-        #self._extract_textrank_digest(doc,
+        # self._extract_textrank_digest(doc,
         #                              text_process_params.summary_size.calculate_size(len(doc.sentences)))
         self._extract_keywords(doc, kw_candidates, text_process_params.keywords_number)
 

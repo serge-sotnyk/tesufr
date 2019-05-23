@@ -1,0 +1,2 @@
+from .pdf_preprocessor import preprocess_pdf
+from .dos_formatting import is_text_dos_formatted, remove_dos_formatting

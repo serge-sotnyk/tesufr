@@ -2,7 +2,9 @@ import os
 from typing import Iterable, List
 from zipfile import ZipFile
 
+from ... import parse_sentences_multilingual
 from tesufr.corpora import SetType, CorpusDocument, CorpusPurpose
+from tesufr.text_utils import preprocess_pdf
 from tesufr.text_utils.dos_formatting import remove_dos_formatting
 from .ids_provider import IdsProvider
 
@@ -32,11 +34,14 @@ class Krapivin2009Provider(IdsProvider):
                     in_abstract, in_text, in_title = False, False, False
             else:
                 if in_abstract:
-                    summary.append(l)
+                    sents = parse_sentences_multilingual(l)
+                    for sent in sents:
+                        summary.append(l[sent.start:sent.finish])
                 if in_text:
                     text.append(l)
 
-        text_str = remove_dos_formatting('\n'.join(text))
+        #text_str = remove_dos_formatting('\n'.join(text))
+        text_str = preprocess_pdf('\n'.join(text))
 
         return text_str, summary
 
@@ -55,19 +60,22 @@ class Krapivin2009Provider(IdsProvider):
         else:
             raise NotImplementedError()
 
+        for id_ in ids:
+            yield self.document_by_id(id_)
+
+    def document_by_id(self, id_: str) -> CorpusDocument:
         lang = self.language()
         with ZipFile(self.filename) as zip_corpus:
-            for id_ in ids:
-                with zip_corpus.open('all_docs_abstacts_refined/' + id_ + '.txt') as a:
-                    raw_article = a.read().decode(encoding='utf-8', errors='replace')
-                with zip_corpus.open('all_docs_abstacts_refined/' + id_ + '.key') as kw:
-                    raw_kw = kw.read().decode(encoding='utf-8', errors='replace')
-                article, summary = Krapivin2009Provider._extract_article_summary_krapivin2009(raw_article)
-                res = CorpusDocument(id_, text=article,
-                                     ref_summary=summary,
-                                     ref_keywords=raw_kw.splitlines(),
-                                     lang=lang)
-                yield res
+            with zip_corpus.open('all_docs_abstacts_refined/' + id_ + '.txt') as a:
+                raw_article = a.read().decode(encoding='utf-8', errors='replace')
+            with zip_corpus.open('all_docs_abstacts_refined/' + id_ + '.key') as kw:
+                raw_kw = kw.read().decode(encoding='utf-8', errors='replace')
+        article, summary = Krapivin2009Provider._extract_article_summary_krapivin2009(raw_article)
+        res = CorpusDocument(id_, text=article,
+                             ref_summary=summary,
+                             ref_keywords=raw_kw.splitlines(),
+                             lang=lang)
+        return res
 
     def __init__(self, local_filename: str = 'corpora_data/krapivin2009.zip',
                  url: str = 'https://drive.google.com/uc?export=download&confirm=5CKR&id=1zRP0sKH0tn3P2hWRyE2E3yXjjbkYLHtR'):
