@@ -51,17 +51,17 @@ class EmCore(CoreBase):
             raise ValueError(f"'{lang}' is not valid language id.")
         self.lang_model_definition = lang_models[lang]
         self.nlp = spacy.load(self.lang_model_definition.spacy_vocab_name)
-        self.bremb = BPEmb(lang=lang, dim=300)
+        self.bpemb = BPEmb(lang=lang, dim=300)
 
     def can_process(self, doc: Document, text_process_params: TextProcessParams) -> bool:
         return True if doc.main_lang == self.lang_model_definition.lang else False
 
     def _vectorize_entity(self, entity: Entity, kw: Span):
-        vector = np.zeros((1, self.bremb.dim), dtype='float32')
+        vector = np.zeros((1, self.bpemb.dim), dtype='float32')
         counter = 0
         for t in kw:
             if not t.is_stop:
-                w_vector = self.bremb.embed(t.lemma_).sum(axis=0)
+                w_vector = self.bpemb.embed(t.lemma_).sum(axis=0)
                 vector += w_vector
                 counter += 1
         if counter > 1:
@@ -69,7 +69,7 @@ class EmCore(CoreBase):
         entity.vector = vector
 
     def _vectorize_sent(self, sent: Sentence, sp_sent: Span):
-        vector = np.zeros((1, self.bremb.dim), dtype='float32')
+        vector = np.zeros((1, self.bpemb.dim), dtype='float32')
         counter = 0
         processable_pos = {'NOUN', 'PROPN', 'ADJ', 'VERB'}
         stop_words = self.nlp.Defaults.stop_words
@@ -78,7 +78,7 @@ class EmCore(CoreBase):
                 continue
             if t.is_stop or t.lower_ in stop_words or t.lemma_ in stop_words:
                 continue
-            w_vector = self.bremb.embed(t.lemma_).sum(axis=0)
+            w_vector = self.bpemb.embed(t.lemma_).sum(axis=0)
             vector += w_vector
             counter += 1
         if counter > 1:
@@ -158,7 +158,7 @@ class EmCore(CoreBase):
 
         entities = list(res.values())
 
-        doc_vector = np.zeros((1, self.bremb.dim), dtype='float32')
+        doc_vector = np.zeros((1, self.bpemb.dim), dtype='float32')
         count = 0
         for entity in entities:
             doc_vector += entity.vector * len(entity.entries)
