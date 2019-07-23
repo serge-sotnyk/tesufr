@@ -1,5 +1,5 @@
 from spacy.tokens import Span, Token
-from spacy.tokens.doc import Doc
+from spacy.tokens import Doc
 from summa import summarizer
 
 from ...models import MessageWithCode
