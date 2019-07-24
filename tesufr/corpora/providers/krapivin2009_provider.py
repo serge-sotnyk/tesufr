@@ -78,7 +78,7 @@ class Krapivin2009Provider(IdsProvider):
         return res
 
     def __init__(self, local_filename: str = 'corpora_data/krapivin2009.zip',
-                 url: str = 'https://drive.google.com/uc?export=download&confirm=5CKR&id=1zRP0sKH0tn3P2hWRyE2E3yXjjbkYLHtR'):
+                 url: str = 'https://github.com/serge-sotnyk/tesufr/releases/download/v0.0.1/krapivin2009.zip'):
         super().__init__()
         self.filename = os.path.abspath(local_filename)
         if not self.check_if_file_exist_make_dir(self.filename):

@@ -71,7 +71,7 @@ class BbcNewsProvider(IdsProvider):
         return res
 
     def __init__(self, local_filename: str = 'corpora_data/bbc-news-summary.zip',
-                 url: str = 'https://drive.google.com/uc?authuser=0&id=1xtY-OYYoyeat_DS_Jw-DdCT5MCmC44qV&export=download'):
+                 url: str = 'https://github.com/serge-sotnyk/tesufr/releases/download/v0.0.1/bbc-news-summary.zip'):
         super().__init__()
         self.filename = os.path.abspath(local_filename)
         if not self.check_if_file_exist_make_dir(self.filename):
