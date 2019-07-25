@@ -130,6 +130,7 @@ def _make_sequence(processor: Processor,
         summary = processor.process_text(d.text, text_process_params)
         if summary.errors:
             print(F"Found errors during processing document '{d.id_}'. Skipped.")
+            print("First:", summary.errors[0])
             break
         if summary.warnings:
             print(f"Found in document {d.id_} warnings during processing. First: {summary.warnings[0]}")
